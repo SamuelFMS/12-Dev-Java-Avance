@@ -65,7 +65,7 @@ public class ArticleDB {
         return result;
     }
 
-    public static boolean deleteArticle(int idArticle){
+    public static boolean deleteArticle(int idArticle) {
         String strSql = "DELETE FROM t_articles WHERE idArticle = ?";
         try (Connection connection = DriverManager.getConnection(ConnectionDB.getUrl(), ConnectionDB.getLogin(), null)) {
             PreparedStatement preparedStatement = connection.prepareStatement(strSql);
@@ -80,6 +80,14 @@ public class ArticleDB {
             e.printStackTrace();
             return false;
         }
+    }
+
+
+    public static boolean deleteArticle(Article article) {
+        if (article.getRsIdUser() != null) {
+            return deleteArticle(article.getRsIdUser());
+        }
+        return false;
     }
 
     public static ArrayList<Article> getAll() {
