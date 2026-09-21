@@ -33,14 +33,33 @@ public class ArticleDB {
         }
     }
 
+    private static boolean update(Article article) {
+        String strSql = "UPDATE t_articles SET Description = ?,  Brand= ? , UnitaryPrice = ? WHERE idArticle = ?";
+        try (Connection connection = DriverManager.getConnection(ConnectionDB.getUrl(), ConnectionDB.getLogin(), null)) {
+            PreparedStatement preparedStatement = connection.prepareStatement(strSql);
+            preparedStatement.setString(1, article.getRsDescription());
+            preparedStatement.setString(2, article.getRsBrand());
+            preparedStatement.setDouble(3, article.getRsPrice());
+            preparedStatement.setInt(4, article.getRsIdUser());
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if(rowsUpdated > 0){
+                System.out.println("La mise a jour a ete effectuee avec succes !");
+            }
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static boolean updateOrCreate(Article article) {
-        boolean result = true;
-        if(article.getRsIdUser() == null) {
+        boolean result;
+        if (article.getRsIdUser() == null) {
             System.out.println("Creating article ");
             result = create(article);
-        }
-        else {
+        } else {
             System.out.println("Update");
+            result = update(article);
         }
 
         return result;
