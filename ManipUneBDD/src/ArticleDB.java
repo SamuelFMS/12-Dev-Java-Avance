@@ -8,17 +8,23 @@ import java.util.ArrayList;
 
 public class ArticleDB {
 
-    public static boolean create(Article article){
+    private static boolean create(Article article) {
         String strSql = "INSERT INTO t_articles (Description, Brand, UnitaryPrice) VALUES(?, ?, ?) ";
         try (Connection connection = DriverManager.getConnection(ConnectionDB.getUrl(), ConnectionDB.getLogin(), null)) {
-            PreparedStatement preparedStatement = connection.prepareStatement(strSql);
+            PreparedStatement preparedStatement = connection.prepareStatement(strSql, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, article.getRsDescription());
             preparedStatement.setString(2, article.getRsBrand());
             preparedStatement.setDouble(3, article.getRsPrice());
 
             int rowsInserted = preparedStatement.executeUpdate();
-            if(rowsInserted > 0){
-                System.out.println("Insertion avec success");
+
+            if (rowsInserted== 1) {
+                try(ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if(generatedKeys.next()) {
+                        article.setRsIdUser(generatedKeys.getInt(1));
+                        System.out.println("Insertion avec success");
+                    }
+                }
             }
             return true;
         } catch (SQLException e) {
