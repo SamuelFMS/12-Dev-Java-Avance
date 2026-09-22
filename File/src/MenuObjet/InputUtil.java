@@ -1,3 +1,5 @@
+package MenuObjet;
+
 import java.util.Scanner;
 
 public class InputUtil {
@@ -15,7 +17,7 @@ public class InputUtil {
                 // Gérer l'erreur si le string n'est pas un nombre
                 System.out.println("Ce n'est pas un nombre valide !");
             }
-        } while(!isInputValid);
+        } while (!isInputValid);
         return number;
     }
 }
