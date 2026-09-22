@@ -1,21 +1,15 @@
 package fr.ldnr.thread;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
-public class ThreadTime {
+public class TestThread {
 
     public static void main(String[] args) {
-        DateFormat df = new SimpleDateFormat("HH:mm:ss");
         ArrayList<Thread> threads= new ArrayList<>();
         for(int i = 1; i <= 5; i++){
             Thread thread = new Thread(new MonRunnable(i));
             threads.add(thread);
         }
-
-        System.out.println(df.format(new Date()));
         for (Thread thread: threads){
             thread.start();
         }
