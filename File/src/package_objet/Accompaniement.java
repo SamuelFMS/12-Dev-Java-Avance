@@ -1,7 +1,13 @@
 package package_objet;
 
+import java.math.BigDecimal;
+
 public class Accompaniement extends Categorie {
-    protected static String[] proposition = {"Riz", "Pates", "Frites", "Légumes", "Aucun"};
+    protected static Product[] proposition = {    new Product("Riz", BigDecimal.valueOf(2.50)),
+            new Product("Pates", BigDecimal.valueOf(2.50)),
+            new Product("Frites", BigDecimal.valueOf(3.50)),
+            new Product("Légumes", BigDecimal.valueOf(3.80)),
+            new Product("Aucun", BigDecimal.ZERO)};
 
     @Override
     public String getName() {
@@ -9,7 +15,7 @@ public class Accompaniement extends Categorie {
     }
 
     @Override
-    public String[] getProposition() {
+    public Product[] getProposition() {
         return proposition;
     }
 }
