@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class MainObjets {
@@ -31,7 +33,16 @@ public class MainObjets {
             System.out.println(menus[numeroMenu]);
             System.out.println("=================================");
         }
+        System.out.println("Prix totale: " + getPrices(menus) + "€");
         saveMenuToFile(menus);
+    }
+
+    public static BigDecimal getPrices(Menu[] menus){
+        BigDecimal total = BigDecimal.ZERO;
+        for (Menu menu : menus) {
+            total = total.add(menu.getPrice());
+        }
+        return total;
     }
 
     public static void readMenu(){

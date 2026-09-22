@@ -1,6 +1,7 @@
 package package_objet;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -19,6 +20,10 @@ public abstract class Categorie implements Serializable {
     }
     public Product selected(){
         return getProposition()[selected];
+    }
+
+    public BigDecimal getPrice(){
+        return selected().price;
     }
 
     @Override

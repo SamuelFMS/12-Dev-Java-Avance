@@ -1,6 +1,7 @@
 package package_objet;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Scanner;
 
 public class Menu implements Serializable {
@@ -24,6 +25,10 @@ public class Menu implements Serializable {
         this.accompaniement.inputSelection(scanner);
         this.drink.inputSelection(scanner);
         this.dessert.inputSelection(scanner);
+    }
+
+    public BigDecimal getPrice() {
+        return this.entry.getPrice().add(this.mainMenu.getPrice()).add(this.accompaniement.getPrice()).add(this.drink.getPrice()).add(this.dessert.getPrice());
     }
 
     @Override
