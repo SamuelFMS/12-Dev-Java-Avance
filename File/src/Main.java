@@ -1,4 +1,4 @@
-import MenuObjet.InputUtil;
+import package_objet.InputUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,7 +16,7 @@ public class Main {
         for(int i = 0; i < elements.length; i++){
             System.out.print("["+(i+1)+" - " + elements[i] + "]");
         }
-        System.out.println("");
+        System.out.println();
     }
 
     public static String displayMenuForFile(int[][] menu) {

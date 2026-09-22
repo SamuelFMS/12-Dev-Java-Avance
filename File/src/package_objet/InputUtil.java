@@ -1,4 +1,4 @@
-package MenuObjet;
+package package_objet;
 
 import java.util.Scanner;
 
