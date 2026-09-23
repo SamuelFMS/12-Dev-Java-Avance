@@ -3,9 +3,9 @@ package utils;
 import java.util.Scanner;
 
 public interface InputUtils {
-    static Boolean inputBoolean(Scanner scanner){
+    static boolean inputBoolean(Scanner scanner){
         boolean result = false;
-        Boolean isInputValid = false;
+        boolean isInputValid = false;
         while (!isInputValid) {
             String input = scanner.next();
             if(input.equalsIgnoreCase("y") || input.equalsIgnoreCase("yes")){
@@ -14,7 +14,6 @@ public interface InputUtils {
             }
             else if (input.equalsIgnoreCase("n") || input.equalsIgnoreCase("no")) {
                 isInputValid = true;
-                result = false;
             }
             else{
                 System.out.println("Saisie incorrecte (y/n) attendus");
@@ -25,7 +24,7 @@ public interface InputUtils {
 
     static Integer inputInteger(Scanner scan, int min, int max) {
         Integer number = null;
-        Boolean isInputValid = false;
+        boolean isInputValid = false;
         do {
             String numberString = scan.next();
             try {
@@ -39,5 +38,30 @@ public interface InputUtils {
             }
         } while (!isInputValid);
         return number;
+    }
+
+    static String inputNextWithRegex(Scanner scanner, String regex, String errorMessage){
+        boolean isInputValid = false;
+        String res = "";
+        while(!isInputValid){
+            res = scanner.next();
+            if(res.matches(regex)){
+                isInputValid = true;
+            } else {
+                System.out.println(errorMessage);
+            }
+        }
+        return res;
+    }
+
+    static String inputNextLine(Scanner scanner) {
+        String res = scanner.nextLine();
+        while (res.isEmpty()) {
+            res = scanner.nextLine();
+            if(res.isEmpty()) {
+                System.out.println("La chaine ne peux pas etre vide");
+            }
+        }
+        return res;
     }
 }

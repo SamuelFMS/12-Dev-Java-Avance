@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Dao<T> {
-    protected final String nameTable;
+    protected final String vueNameTable;
+    protected final String creationNameTable;
     protected final String nameIdColumn;
 
-    protected Dao(String nameTable, String nameIdColumn) {
-        this.nameTable = nameTable;
+    protected Dao(String vueNameTable, String creationNameTable, String nameIdColumn) {
+        this.vueNameTable = vueNameTable;
+        this.creationNameTable = creationNameTable;
         this.nameIdColumn = nameIdColumn;
     }
 
@@ -23,7 +25,7 @@ public abstract class Dao<T> {
 
     public List<T> getAll(){
         List<T> list = new ArrayList<>();
-        String sqlRequest = "SELECT * FROM " + nameTable;
+        String sqlRequest = "SELECT * FROM " + vueNameTable;
         try (Connection connection = DriverManager.getConnection(DataBaseConfig.URL, DataBaseConfig.USER, null)) {
             try (Statement statement = connection.createStatement()) {
                 try (ResultSet resultSet = statement.executeQuery(sqlRequest)) {
