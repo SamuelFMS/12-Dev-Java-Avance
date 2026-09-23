@@ -4,6 +4,7 @@ import exceptions.EmptyArrayException;
 import jdk.internal.util.xml.impl.Input;
 import models.ClientModel;
 import utils.DisplayTable;
+import utils.DisplayTableInterface;
 import utils.InputUtils;
 import utils.SearchTable;
 import validation.Validator;
@@ -43,7 +44,13 @@ public class Main {
     }
 
     public static void viewAccountBank(){
-
+        List<ClientModel> listClient = clientBusiness.getAllClients();
+        SearchTable searchTable = new SearchTable(listClient);
+        try {
+            searchTable.show(scanner);
+        } catch (EmptyArrayException e){
+            System.out.println("Aucun client trouvé");
+        }
     }
 
     public static void mainMenu(){

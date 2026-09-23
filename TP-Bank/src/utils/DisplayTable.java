@@ -22,7 +22,7 @@ public class DisplayTable <T extends DisplayTableInterface>{
         searchData = this.data;
     }
 
-    public void searchInData(String search){
+    protected void searchInData(String search){
         currentPage = 0;
         searchData = new ArrayList<>();
         for(T ligne : data){
@@ -43,11 +43,11 @@ public class DisplayTable <T extends DisplayTableInterface>{
         }
     }
 
-    public int getTotalNumberPage(){
+    protected int getTotalNumberPage(){
         return (int)Math.ceil((double) searchData.size() / numberOfItemPerPage);
     }
 
-    public int[] getSizeColumn(){
+    protected int[] getSizeColumn(){
         List<T> currentData = getCurrentData();
         String[] columnName = currentData.get(0).getColumnNames();
 
@@ -61,7 +61,7 @@ public class DisplayTable <T extends DisplayTableInterface>{
         return result;
     }
 
-    public List<T> getCurrentData(){
+    protected List<T> getCurrentData(){
         return searchData.subList(currentPage*10, Math.min((currentPage+1)*10, searchData.size()));
     }
 
@@ -104,42 +104,52 @@ public class DisplayTable <T extends DisplayTableInterface>{
         System.out.println();
     }
 
-    public void show(Scanner scanner) throws EmptyArrayException {
-        displayTable();
-        System.out.printf("Page %d sur %d  Total : %d éléments  %n", currentPage+1, getTotalNumberPage(), searchData.size());
-        if(currentPage+1 < getTotalNumberPage()){
-            System.out.print("[N]ext ");
-        }
-        if(currentPage > 0) {
-            System.out.print("[P]rev ");
-        }
-        System.out.print("[S]earch ");
-        if(data.size() != searchData.size()) {
-            System.out.print("[R]eset ");
-        }
-        System.out.println("[Q]uit");
-        String s = scanner.next();
-        if(s.equalsIgnoreCase("N")){
-            if(currentPage+1 < getTotalNumberPage()) {
-                currentPage++;
-                show(scanner);
+    public String show(Scanner scanner) throws EmptyArrayException {
+        boolean display = true;
+        String s = "";
+        while (display) {
+            displayTable();
+            System.out.printf("Page %d sur %d  Total : %d éléments  %n", currentPage + 1, getTotalNumberPage(), searchData.size());
+            if (currentPage + 1 < getTotalNumberPage()) {
+                System.out.print("[N]ext ");
             }
-        } else if (s.equalsIgnoreCase("P")) {
-            if(currentPage > 0) {
-                currentPage--;
-                show(scanner);
+            if (currentPage > 0) {
+                System.out.print("[P]rev ");
             }
-        } else if (s.equalsIgnoreCase("S")) {
-            System.out.println("Entrez votre recherche: ");
-            String search = scanner.next();
-            searchInData(search);
-            show(scanner);
-        } else if (s.equalsIgnoreCase("R")) {
-            if(searchData.size() != data.size()) {
-                searchData = data;
-                currentPage = 0;
-                show(scanner);
+            System.out.print("[S]earch ");
+            if (data.size() != searchData.size()) {
+                System.out.print("[R]eset ");
             }
+            System.out.println("[Q]uit");
+            s = scanner.next();
+            if (s.equalsIgnoreCase("N")) {
+                if (currentPage + 1 < getTotalNumberPage()) {
+                    currentPage++;
+                }
+            } else if (s.equalsIgnoreCase("P")) {
+                if (currentPage > 0) {
+                    currentPage--;
+                }
+            } else if (s.equalsIgnoreCase("S")) {
+                System.out.println("Entrez votre recherche: ");
+                String search = scanner.next();
+                searchInData(search);
+            } else if (s.equalsIgnoreCase("R")) {
+                if (searchData.size() != data.size()) {
+                    searchData = data;
+                    currentPage = 0;
+                }
+            } else if (s.equalsIgnoreCase("Q")) {
+                display = false;
+            } else {
+                display = false;
+            }
+        }
+        if(s.equalsIgnoreCase("Q")) {
+            return null;
+        }
+        else{
+            return s;
         }
     }
 }
