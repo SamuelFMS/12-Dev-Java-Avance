@@ -2,13 +2,15 @@ package models;
 
 import utils.DisplayTableInterface;
 
-public class ClientBankModel implements DisplayTableInterface {
+import java.math.BigDecimal;
+
+public class ClientModel implements DisplayTableInterface {
 
     private String numero;
     private String titulaire;
-    private int solde;
+    private BigDecimal solde;
 
-    public ClientBankModel(String numero, String titulaire, int solde) {
+    public ClientModel(String numero, String titulaire, BigDecimal solde) {
         this.numero = numero;
         this.titulaire = titulaire;
         this.solde = solde;

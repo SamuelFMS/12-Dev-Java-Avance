@@ -1,5 +1,6 @@
+import dao.ClientDao;
 import exceptions.EmptyArrayException;
-import models.ClientBankModel;
+import models.ClientModel;
 import utils.DisplayTable;
 import utils.SearchTable;
 
@@ -12,13 +13,21 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        List<ClientBankModel> mesClients = new ArrayList<>();
-        mesClients.add(new ClientBankModel("FR-XXXX-XXXX", "Samuel Curran", 1000));
-        mesClients.add(new ClientBankModel("IE-XXXX-1445", "PAPA", 10000000));
-        for(int i = 0; i< 30;i++){
-            mesClients.add(new ClientBankModel("IE-XXXX-1445", "Test", 10000000));
+        List<ClientModel> mesClients = new ArrayList<>();
+        ClientDao clientDao = new ClientDao();
+        mesClients = clientDao.getAll();
+        SearchTable clientBD = new SearchTable(mesClients);
+        try {
+            clientBD.show(scanner);
+        } catch (EmptyArrayException e) {
+            e.printStackTrace();
         }
-        mesClients.set(12, new ClientBankModel("IE-XXXX-1445TESTETESTSTES", "Test", 10000000));
+       /* mesClients.add(new ClientModel("FR-XXXX-XXXX", "Samuel Curran", 1000));
+        mesClients.add(new ClientModel("IE-XXXX-1445", "PAPA", 10000000));
+        for(int i = 0; i< 30;i++){
+            mesClients.add(new ClientModel("IE-XXXX-1445", "Test", 10000000));
+        }
+        mesClients.set(12, new ClientModel("IE-XXXX-1445TESTETESTSTES", "Test", 10000000));
         DisplayTable displayTable = new DisplayTable(mesClients);
         try {
             displayTable.show(scanner);
@@ -30,6 +39,6 @@ public class Main {
             searchTable.show(scanner);
         } catch (EmptyArrayException e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
 }
