@@ -1,15 +1,35 @@
+import exceptions.EmptyArrayException;
+import models.ClientBankModel;
+import utils.DisplayTable;
+import utils.SearchTable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
-
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+        Scanner scanner = new Scanner(System.in);
+        List<ClientBankModel> mesClients = new ArrayList<>();
+        mesClients.add(new ClientBankModel("FR-XXXX-XXXX", "Samuel Curran", 1000));
+        mesClients.add(new ClientBankModel("IE-XXXX-1445", "PAPA", 10000000));
+        for(int i = 0; i< 30;i++){
+            mesClients.add(new ClientBankModel("IE-XXXX-1445", "Test", 10000000));
+        }
+        mesClients.set(12, new ClientBankModel("IE-XXXX-1445TESTETESTSTES", "Test", 10000000));
+        DisplayTable displayTable = new DisplayTable(mesClients);
+        try {
+            displayTable.show(scanner);
+        } catch (EmptyArrayException e) {
+            throw new RuntimeException(e);
+        }
+        SearchTable searchTable = new SearchTable(mesClients);
+        try {
+            searchTable.show(scanner);
+        } catch (EmptyArrayException e) {
+            throw new RuntimeException(e);
         }
     }
 }
