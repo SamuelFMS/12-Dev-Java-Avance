@@ -16,6 +16,18 @@ public class ClientModel implements DisplayTableInterface {
         this.solde = solde;
     }
 
+    public String getNumero() {
+        return numero;
+    }
+
+    public String getTitulaire() {
+        return titulaire;
+    }
+
+    public BigDecimal getSolde() {
+        return solde;
+    }
+
     @Override
     public String[] getColumnNames() {
         return new String[]{"Numéro","Titulaire", "Solde"};

@@ -1,7 +1,9 @@
 package business;
 
 import config.DataBaseConfig;
+import dao.ClientDao;
 import dao.TransactionDao;
+import exceptions.SoldeInsuffisant;
 import models.DepotModel;
 import models.RetraitModel;
 import models.TransactionDaoModel;
@@ -17,9 +19,11 @@ import java.util.List;
 
 public class TransactionBusiness {
     private final TransactionDao transactionDao;
+    private final ClientDao clientDao;
 
     public TransactionBusiness() {
         this.transactionDao = new TransactionDao();
+        this.clientDao = new ClientDao();
     }
 
     public List<TransactionModel> getAllRelated(String numeroCompte){
@@ -33,6 +37,30 @@ public class TransactionBusiness {
             }
         }
         return list;
+    }
+
+    public boolean withdrawMoney(String numeroCompte, BigDecimal value) throws SoldeInsuffisant {
+        if(Validator.isAValidDecimal(value.toString())){
+            if(clientDao.getClient(numeroCompte).getSolde().compareTo(value)>=0) {
+                try (Connection connection = DriverManager.getConnection(DataBaseConfig.URL, DataBaseConfig.USER, null)) {
+                    connection.setAutoCommit(false);
+                    if (transactionDao.withdrawMoney(connection, numeroCompte, value)) {
+                        connection.commit();
+                        return true;
+                    } else {
+                        connection.rollback();
+                        return false;
+                    }
+                } catch (SQLException e){
+                    e.printStackTrace();
+                    return false;
+                }
+            } else {
+                throw new SoldeInsuffisant();
+            }
+        } else{
+            throw new RuntimeException("Invalid withdraw montant " + value);
+        }
     }
 
     public boolean depositMoney(String numeroCompte, BigDecimal value){
@@ -52,7 +80,7 @@ public class TransactionBusiness {
             }
         }
         else {
-            throw new RuntimeException("Invalid montant " + value);
+            throw new RuntimeException("Invalid deposit montant " + value);
         }
     }
 }

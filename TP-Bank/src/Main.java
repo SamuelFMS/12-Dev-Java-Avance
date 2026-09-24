@@ -1,7 +1,7 @@
 import business.ClientBusiness;
 import business.TransactionBusiness;
-import com.sun.security.ntlm.Client;
 import exceptions.EmptyArrayException;
+import exceptions.SoldeInsuffisant;
 import models.ClientModel;
 import models.TransactionModel;
 import utils.DisplayTable;
@@ -21,7 +21,7 @@ public class Main {
     static Scanner scanner;
 
 
-    public static void createAccountBank(){
+    public static void createAccountBank() {
         System.out.println("Veuillez entrez un numéro de compte ex: (FR-0001-0004): ");
         String numberAccount = InputUtils.inputNextWithRegex(scanner, Validator.ACCOUNT_NUMBER, "Format incorrect. Exemple attendu : FR-0001-0100");
         System.out.println("Veuillez entrez le titulaire du compte bancaire");
@@ -30,55 +30,80 @@ public class Main {
         System.out.println("Numéro de compte: " + numberAccount);
         System.out.println("Titulaire: " + holder);
         System.out.print("Confirmer création du compte (y/n): ");
-        if(InputUtils.inputBoolean(scanner)) {
+        if (InputUtils.inputBoolean(scanner)) {
             String res = clientBusiness.createClient(numberAccount, holder);
-            if(res == null) {
+            if (res == null) {
                 System.out.println("Echec de la création d'un compte");
-            }
-            else {
+            } else {
                 System.out.println("Création du compte bancaire " + res + " avec succès");
             }
-        } else{
+        } else {
             System.out.println("Annulation de la création d'un compte");
         }
 
     }
 
-    public static void viewAccountBank(){
+    public static void viewAccountBank() {
         List<ClientModel> listClient = clientBusiness.getAllClients();
         SearchTable<ClientModel> searchTable = new SearchTable<>(listClient);
         try {
             String numeroCompte = searchTable.show(scanner);
-            if(numeroCompte != null){
+            if (numeroCompte != null) {
                 List<TransactionModel> transactions = transactionBusiness.getAllRelated(numeroCompte);
                 DisplayTable<TransactionModel> displayTable = new DisplayTable<>(transactions);
                 displayTable.show(scanner);
             }
-        } catch (EmptyArrayException e){
+        } catch (EmptyArrayException e) {
             System.out.println("Aucun client trouvé");
         }
     }
 
-    public static void depositMoney(){
+    public static void depositMoney() {
         List<ClientModel> listClient = clientBusiness.getAllClients();
         SearchTable<ClientModel> searchTable = new SearchTable<>(listClient);
         try {
             String numeroCompte = searchTable.show(scanner);
-            if(numeroCompte != null){
+            if (numeroCompte != null) {
                 System.out.println("Combien d'argent souhaitez vous ajoutez au compte? ");
                 BigDecimal depositMoney = InputUtils.inputMoney(scanner);
-                if(transactionBusiness.depositMoney(numeroCompte, depositMoney)){
+                if (transactionBusiness.depositMoney(numeroCompte, depositMoney)) {
                     System.out.println("Le dépot a été confirmé");
                 } else {
                     System.out.println("Une erreur s'est produite lors du dépot");
                 }
             }
-        } catch (EmptyArrayException e){
+        } catch (EmptyArrayException e) {
             System.out.println("Aucun client trouvé");
         }
     }
 
-    public static void mainMenu(){
+    public static void withdrawMoney() {
+        List<ClientModel> listClient = clientBusiness.getAllClients();
+        SearchTable<ClientModel> searchTable = new SearchTable<>(listClient);
+        try {
+            String numeroCompte = searchTable.show(scanner);
+            if (numeroCompte != null) {
+                System.out.println("Combien d'argent souhaitez vous retirez au compte? ");
+                BigDecimal withdrawMoney = InputUtils.inputMoney(scanner);
+                System.out.println("Etes vous sur de voulour retirer " + withdrawMoney + "€? (y/n)");
+                if (InputUtils.inputBoolean(scanner)) {
+                    try {
+                        if(transactionBusiness.withdrawMoney(numeroCompte, withdrawMoney)) {
+                            System.out.println("Succes l'argent a bien été retiré");
+                        } else {
+                            System.out.println("Une erreur s'est produite");
+                        }
+                    } catch (SoldeInsuffisant e) {
+                        System.out.println("Le solde est insuffisant pour faire cet opération");
+                    }
+                }
+            }
+        } catch (EmptyArrayException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void mainMenu() {
         boolean applicationRunning = true;
         while (applicationRunning) {
             System.out.println("1- Créer un compte bancaire");
@@ -98,6 +123,9 @@ public class Main {
                     break;
                 case 3:
                     depositMoney();
+                    break;
+                case 4:
+                    withdrawMoney();
                     break;
                 default:
                     System.out.println("OK");

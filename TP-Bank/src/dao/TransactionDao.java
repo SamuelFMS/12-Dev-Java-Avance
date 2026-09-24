@@ -18,6 +18,28 @@ public class TransactionDao extends Dao<TransactionDaoModel> {
         super("vue_details_transferts");
     }
 
+    public boolean withdrawMoney(Connection connection, String numero_compte, BigDecimal money){
+        String sqlRequest = "INSERT INTO retrait(date_retrait, somme, numero_compte, id_depot) VALUES (?, ?, ?, ?)";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setObject(1, LocalDate.now());
+            preparedStatement.setBigDecimal(2, money);
+            preparedStatement.setString(3, numero_compte);
+            preparedStatement.setString(4, null);
+
+            int rowsInserted = preparedStatement.executeUpdate();
+
+            if (rowsInserted== 1) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean depositMoney(Connection connection, String numero_compte, BigDecimal money){
         String sqlRequest = "INSERT INTO depot(date_depot, somme, numero_compte, description) VALUES (?, ?, ?, ?)";
         try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
