@@ -52,7 +52,12 @@ public class Main {
             if (numeroCompte != null) {
                 List<TransactionModel> transactions = transactionBusiness.getAllRelated(numeroCompte);
                 DisplayTable<TransactionModel> displayTable = new DisplayTable<>(transactions);
-                displayTable.show(scanner, null);
+                try {
+                    displayTable.show(scanner, null);
+                }
+                catch (EmptyArrayException e){
+                    System.out.println("Aucune opération n'a été éffectués sur ce compte");
+                }
             }
         } catch (EmptyArrayException e) {
             System.out.println("Aucun client trouvé");

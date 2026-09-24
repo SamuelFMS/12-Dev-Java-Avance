@@ -10,7 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class TransactionDao extends Dao<TransactionDaoModel> {
     public boolean withdrawMoney(Connection connection, String numero_compte, BigDecimal money, Integer id_depot){
         String sqlRequest = "INSERT INTO retrait(date_retrait, somme, numero_compte, id_depot) VALUES (?, ?, ?, ?)";
         try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
-            preparedStatement.setObject(1, LocalDate.now());
+            preparedStatement.setObject(1, LocalDateTime.now());
             preparedStatement.setBigDecimal(2, money);
             preparedStatement.setString(3, numero_compte);
             if(id_depot == null){
@@ -48,7 +48,7 @@ public class TransactionDao extends Dao<TransactionDaoModel> {
     public Integer depositMoney(Connection connection, String numero_compte, BigDecimal money){
         String sqlRequest = "INSERT INTO depot(date_depot, somme, numero_compte, description) VALUES (?, ?, ?, ?)";
         try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setObject(1, LocalDate.now());
+            preparedStatement.setObject(1, LocalDateTime.now());
             preparedStatement.setBigDecimal(2, money);
             preparedStatement.setString(3, numero_compte);
             preparedStatement.setString(4, null);

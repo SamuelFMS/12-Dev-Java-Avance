@@ -34,6 +34,9 @@ public class SearchTable<T extends DisplayTableInterface> extends DisplayTable<T
         String s = "";
         do {
             s = super.show(scanner, text);
+            if(s == null) {
+                break;
+            }
         } while (!findKey(s));
         return s;
 
