@@ -1,6 +1,7 @@
 import business.ClientBusiness;
 import business.TransactionBusiness;
 import exceptions.EmptyArrayException;
+import exceptions.IdenticalAccountsException;
 import exceptions.SoldeInsuffisant;
 import models.ClientModel;
 import models.TransactionModel;
@@ -47,11 +48,11 @@ public class Main {
         List<ClientModel> listClient = clientBusiness.getAllClients();
         SearchTable<ClientModel> searchTable = new SearchTable<>(listClient);
         try {
-            String numeroCompte = searchTable.show(scanner);
+            String numeroCompte = searchTable.show(scanner, "Entrez un numéro de compte pour voir l'historique: ");
             if (numeroCompte != null) {
                 List<TransactionModel> transactions = transactionBusiness.getAllRelated(numeroCompte);
                 DisplayTable<TransactionModel> displayTable = new DisplayTable<>(transactions);
-                displayTable.show(scanner);
+                displayTable.show(scanner, null);
             }
         } catch (EmptyArrayException e) {
             System.out.println("Aucun client trouvé");
@@ -62,7 +63,7 @@ public class Main {
         List<ClientModel> listClient = clientBusiness.getAllClients();
         SearchTable<ClientModel> searchTable = new SearchTable<>(listClient);
         try {
-            String numeroCompte = searchTable.show(scanner);
+            String numeroCompte = searchTable.show(scanner, "Entrez un numéro de compte: ");
             if (numeroCompte != null) {
                 System.out.println("Combien d'argent souhaitez vous ajoutez au compte? ");
                 BigDecimal depositMoney = InputUtils.inputMoney(scanner);
@@ -81,7 +82,7 @@ public class Main {
         List<ClientModel> listClient = clientBusiness.getAllClients();
         SearchTable<ClientModel> searchTable = new SearchTable<>(listClient);
         try {
-            String numeroCompte = searchTable.show(scanner);
+            String numeroCompte = searchTable.show(scanner, "Entrez un numéro de compte: ");
             if (numeroCompte != null) {
                 System.out.println("Combien d'argent souhaitez vous retirez au compte? ");
                 BigDecimal withdrawMoney = InputUtils.inputMoney(scanner);
@@ -103,6 +104,35 @@ public class Main {
         }
     }
 
+    public static void transferMoney() {
+        List<ClientModel> listClient = clientBusiness.getAllClients();
+        SearchTable<ClientModel> searchTable = new SearchTable<>(listClient);
+        try {
+            String numberAccountTransmitter = searchTable.show(scanner, "Entrez un numéro de compte qui donne: ");
+            String numberAccountBeneficiary = searchTable.show(scanner, "Entrez le numéro de compte qui recoit l'argent: ");
+            System.out.println("Combien d'argent souhaitez vous transferez? ");
+            BigDecimal transferMoney = InputUtils.inputMoney(scanner);
+            System.out.println("Etes vous sur de voulour transferer " + transferMoney + "€");
+            System.out.println("De " + numberAccountTransmitter + " vers " + numberAccountBeneficiary + " ? (y/n)");
+            if (InputUtils.inputBoolean(scanner)) {
+                try {
+                    if(transactionBusiness.transferMoney(numberAccountTransmitter, numberAccountBeneficiary, transferMoney)) {
+                        System.out.println("Succes l'argent a bien été transféré");
+                    } else {
+                        System.out.println("Une erreur s'est produite");
+                    }
+                } catch (SoldeInsuffisant e) {
+                    System.out.println("Le solde est insuffisant pour faire cet opération");
+                } catch (IdenticalAccountsException e) {
+                    System.out.println("Vous ne pouvez pas envoyer sur le meme compte");
+                }
+            }
+
+        } catch (EmptyArrayException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void mainMenu() {
         boolean applicationRunning = true;
         while (applicationRunning) {
@@ -113,7 +143,7 @@ public class Main {
             System.out.println("5- Effectuer un virement");
             System.out.println("0- Stop");
             System.out.println("Votre choix:");
-            int choice = InputUtils.inputInteger(scanner, 0, 4);
+            int choice = InputUtils.inputInteger(scanner, 0, 5);
             switch (choice) {
                 case 1:
                     createAccountBank();
@@ -126,6 +156,9 @@ public class Main {
                     break;
                 case 4:
                     withdrawMoney();
+                    break;
+                case 5:
+                    transferMoney();
                     break;
                 default:
                     System.out.println("OK");

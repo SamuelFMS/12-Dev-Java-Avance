@@ -30,10 +30,10 @@ public class SearchTable<T extends DisplayTableInterface> extends DisplayTable<T
     }
 
     @Override
-    public String show(Scanner scanner) throws EmptyArrayException {
+    public String show(Scanner scanner, String text) throws EmptyArrayException {
         String s = "";
         do {
-            s = super.show(scanner);
+            s = super.show(scanner, text);
         } while (!findKey(s));
         return s;
 

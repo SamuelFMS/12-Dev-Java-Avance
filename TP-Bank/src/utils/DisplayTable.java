@@ -104,7 +104,7 @@ public class DisplayTable <T extends DisplayTableInterface>{
         System.out.println();
     }
 
-    public String show(Scanner scanner) throws EmptyArrayException {
+    public String show(Scanner scanner, String text) throws EmptyArrayException {
         boolean display = true;
         String s = "";
         while (display) {
@@ -121,6 +121,9 @@ public class DisplayTable <T extends DisplayTableInterface>{
                 System.out.print("[R]eset ");
             }
             System.out.println("[Q]uit");
+            if(text != null) {
+                System.out.println(text);
+            }
             s = scanner.next();
             if (s.equalsIgnoreCase("N")) {
                 if (currentPage + 1 < getTotalNumberPage()) {
