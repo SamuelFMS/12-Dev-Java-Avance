@@ -3,28 +3,32 @@ package utils;
 import exceptions.EmptyArrayException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
-public class DisplayTable <T extends DisplayTableInterface>{
+public class DisplayTable<T extends DisplayTableInterface> {
     protected final List<T> data;
-    private List<T> searchData;
     private final int numberOfItemPerPage = 10;
+    private List<T> searchData;
     private int currentPage = 0;
 
     public DisplayTable(T[] data) {
         this.data = java.util.Arrays.asList(data);
-        searchData = this.data ;
+        searchData = this.data;
     }
 
-    public DisplayTable(List<T> data){
+    public DisplayTable(List<T> data) {
         this.data = data;
         searchData = this.data;
     }
 
-    protected void searchInData(String search){
+    protected void searchInData(String search) {
         currentPage = 0;
-        searchData = new ArrayList<>();
+        searchData = data.stream().filter(ligne -> Arrays.stream(ligne.getRowData()).anyMatch(s -> s.toUpperCase().contains(search.toUpperCase()))).collect(Collectors.toCollection(ArrayList::new));
+        /*searchData = new ArrayList<>();
+
         for(T ligne : data){
             boolean find = false;
             for (String s : ligne.getRowData()){
@@ -36,37 +40,38 @@ public class DisplayTable <T extends DisplayTableInterface>{
             if(find){
                 searchData.add(ligne);
             }
-        }
-        if(searchData.isEmpty()){
+        }*/
+        if (searchData.isEmpty()) {
             System.out.println("Aucun résultat trouvée pour la recherche");
             searchData = data;
         }
     }
 
-    protected int getTotalNumberPage(){
-        return (int)Math.ceil((double) searchData.size() / numberOfItemPerPage);
+    protected int getTotalNumberPage() {
+        return (int) Math.ceil((double) searchData.size() / numberOfItemPerPage);
     }
 
-    protected int[] getSizeColumn(){
+    protected int[] getSizeColumn() {
         List<T> currentData = getCurrentData();
         String[] columnName = currentData.get(0).getColumnNames();
 
         int[] result = new int[columnName.length];
-        for (int columnNumber =0; columnNumber<columnName.length; columnNumber++){
+
+        for (int columnNumber = 0; columnNumber < columnName.length; columnNumber++) {
             result[columnNumber] = columnName[columnNumber].length();
-            for(int rowNumber = 0; rowNumber < currentData.size(); rowNumber++) {
+            for (int rowNumber = 0; rowNumber < currentData.size(); rowNumber++) {
                 result[columnNumber] = Math.max(result[columnNumber], currentData.get(rowNumber).getRowData()[columnNumber].length());
             }
         }
         return result;
     }
 
-    protected List<T> getCurrentData(){
-        return searchData.subList(currentPage*10, Math.min((currentPage+1)*10, searchData.size()));
+    protected List<T> getCurrentData() {
+        return searchData.subList(currentPage * 10, Math.min((currentPage + 1) * 10, searchData.size()));
     }
 
     private void displayTable() throws EmptyArrayException {
-        if(searchData.isEmpty()){
+        if (searchData.isEmpty()) {
             throw new EmptyArrayException();
         }
         int[] sizeColumn = getSizeColumn();
@@ -76,9 +81,9 @@ public class DisplayTable <T extends DisplayTableInterface>{
             Display First line +----+-------+------+
          */
         StringBuilder delimiter = new StringBuilder();
-        for(int columnIndex = 0; columnIndex < columnName.length; columnIndex++) {
+        for (int columnIndex = 0; columnIndex < columnName.length; columnIndex++) {
             delimiter.append("+");
-            delimiter.append(StringUtils.repeat("-", sizeColumn[columnIndex]+2));
+            delimiter.append(StringUtils.repeat("-", sizeColumn[columnIndex] + 2));
         }
         delimiter.append("+");
         System.out.println(delimiter);
@@ -87,16 +92,16 @@ public class DisplayTable <T extends DisplayTableInterface>{
             Display Header
          */
         System.out.print("| ");
-        for(int columnIndex = 0; columnIndex < columnName.length; columnIndex++){
+        for (int columnIndex = 0; columnIndex < columnName.length; columnIndex++) {
             System.out.print(StringUtils.padOrTrunc(columnName[columnIndex], sizeColumn[columnIndex]) + " | ");
         }
         System.out.println();
         System.out.println(delimiter);
 
-        for(T line: getCurrentData()){
+        for (T line : getCurrentData()) {
             String[] colRowData = line.getRowData();
             System.out.print("| ");
-            for(int columnIndex = 0; columnIndex < colRowData.length; columnIndex++)
+            for (int columnIndex = 0; columnIndex < colRowData.length; columnIndex++)
                 System.out.print(StringUtils.padOrTrunc(colRowData[columnIndex], sizeColumn[columnIndex]) + " | ");
             System.out.println();
         }
@@ -121,7 +126,7 @@ public class DisplayTable <T extends DisplayTableInterface>{
                 System.out.print("[R]eset ");
             }
             System.out.println("[Q]uit");
-            if(text != null) {
+            if (text != null) {
                 System.out.println(text);
             }
             s = scanner.next();
@@ -148,10 +153,9 @@ public class DisplayTable <T extends DisplayTableInterface>{
                 display = false;
             }
         }
-        if(s.equalsIgnoreCase("Q")) {
+        if (s.equalsIgnoreCase("Q")) {
             return null;
-        }
-        else{
+        } else {
             return s;
         }
     }

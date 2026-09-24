@@ -13,20 +13,17 @@ public class SearchTable<T extends DisplayTableInterface> extends DisplayTable<T
 
     private void check(){
         Set<String> checked = new HashSet<>();
-        for(T currentToCheck: this.data){
-            if(!checked.add(currentToCheck.getRowData()[ID_COLUMN_TABLE].toUpperCase())){
-                throw new IllegalArgumentException("Duplicate item: " + currentToCheck.getRowData()[ID_COLUMN_TABLE]);
+        this.data.forEach(currentToCheck -> {
+            String value = currentToCheck.getRowData()[ID_COLUMN_TABLE].toUpperCase();
+            if (!checked.add(value)) {
+                throw new IllegalArgumentException("Duplicate item: " + value);
             }
-        }
+        });
     }
 
     private boolean findKey(String id){
-        for(T currentToCheck: this.data) {
-            if (currentToCheck.getRowData()[ID_COLUMN_TABLE].equalsIgnoreCase(id)) {
-                return true;
-            }
-        }
-        return false;
+        return this.data.stream()
+                .anyMatch(maData -> maData.getRowData()[ID_COLUMN_TABLE].equalsIgnoreCase(id));
     }
 
     @Override
