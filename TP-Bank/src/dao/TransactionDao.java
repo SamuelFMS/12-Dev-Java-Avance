@@ -1,21 +1,43 @@
 package dao;
 
 import config.DataBaseConfig;
-import models.ClientModel;
 import models.TransactionDaoModel;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionDao extends Dao<TransactionDaoModel> {
     public TransactionDao() {
         super("vue_details_transferts");
+    }
+
+    public boolean depositMoney(Connection connection, String numero_compte, BigDecimal money){
+        String sqlRequest = "INSERT INTO depot(date_depot, somme, numero_compte, description) VALUES (?, ?, ?, ?)";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setObject(1, LocalDate.now());
+            preparedStatement.setBigDecimal(2, money);
+            preparedStatement.setString(3, numero_compte);
+            preparedStatement.setString(4, null);
+
+            int rowsInserted = preparedStatement.executeUpdate();
+
+            if (rowsInserted== 1) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public List<TransactionDaoModel> getAllRelatedTransaction(String numero_compte) {

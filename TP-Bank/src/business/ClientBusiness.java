@@ -21,6 +21,10 @@ public class ClientBusiness {
         return clientDao.getAll();
     }
 
+    public ClientModel getClient(String numberAccount){
+        return clientDao.getClient(numberAccount);
+    }
+
     public String createClient(String numberAccount, String holder) {
         if (!Validator.isValidAccountNumber(numberAccount)) {
             throw new IllegalArgumentException("Numéro de compte invalide : " + numberAccount);

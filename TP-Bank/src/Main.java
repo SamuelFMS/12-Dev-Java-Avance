@@ -1,17 +1,15 @@
 import business.ClientBusiness;
 import business.TransactionBusiness;
-import dao.ClientDao;
+import com.sun.security.ntlm.Client;
 import exceptions.EmptyArrayException;
-import jdk.internal.util.xml.impl.Input;
 import models.ClientModel;
 import models.TransactionModel;
 import utils.DisplayTable;
-import utils.DisplayTableInterface;
 import utils.InputUtils;
 import utils.SearchTable;
 import validation.Validator;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Scanner;
 
@@ -48,13 +46,32 @@ public class Main {
 
     public static void viewAccountBank(){
         List<ClientModel> listClient = clientBusiness.getAllClients();
-        SearchTable searchTable = new SearchTable(listClient);
+        SearchTable<ClientModel> searchTable = new SearchTable<>(listClient);
         try {
             String numeroCompte = searchTable.show(scanner);
             if(numeroCompte != null){
                 List<TransactionModel> transactions = transactionBusiness.getAllRelated(numeroCompte);
-                DisplayTable displayTable = new DisplayTable(transactions);
+                DisplayTable<TransactionModel> displayTable = new DisplayTable<>(transactions);
                 displayTable.show(scanner);
+            }
+        } catch (EmptyArrayException e){
+            System.out.println("Aucun client trouvé");
+        }
+    }
+
+    public static void depositMoney(){
+        List<ClientModel> listClient = clientBusiness.getAllClients();
+        SearchTable<ClientModel> searchTable = new SearchTable<>(listClient);
+        try {
+            String numeroCompte = searchTable.show(scanner);
+            if(numeroCompte != null){
+                System.out.println("Combien d'argent souhaitez vous ajoutez au compte? ");
+                BigDecimal depositMoney = InputUtils.inputMoney(scanner);
+                if(transactionBusiness.depositMoney(numeroCompte, depositMoney)){
+                    System.out.println("Le dépot a été confirmé");
+                } else {
+                    System.out.println("Une erreur s'est produite lors du dépot");
+                }
             }
         } catch (EmptyArrayException e){
             System.out.println("Aucun client trouvé");
@@ -67,7 +84,8 @@ public class Main {
             System.out.println("1- Créer un compte bancaire");
             System.out.println("2- Consulter compte bancaire");
             System.out.println("3- Deposer de l'argent");
-            System.out.println("4- Effectuer un virement");
+            System.out.println("4- Retirer de l'argent");
+            System.out.println("5- Effectuer un virement");
             System.out.println("0- Stop");
             System.out.println("Votre choix:");
             int choice = InputUtils.inputInteger(scanner, 0, 4);
@@ -77,6 +95,9 @@ public class Main {
                     break;
                 case 2:
                     viewAccountBank();
+                    break;
+                case 3:
+                    depositMoney();
                     break;
                 default:
                     System.out.println("OK");

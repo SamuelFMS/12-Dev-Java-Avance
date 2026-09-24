@@ -1,11 +1,17 @@
 package business;
 
+import config.DataBaseConfig;
 import dao.TransactionDao;
 import models.DepotModel;
 import models.RetraitModel;
 import models.TransactionDaoModel;
 import models.TransactionModel;
+import validation.Validator;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,5 +33,26 @@ public class TransactionBusiness {
             }
         }
         return list;
+    }
+
+    public boolean depositMoney(String numeroCompte, BigDecimal value){
+        if(Validator.isAValidDecimal(value.toString())){
+            try (Connection connection = DriverManager.getConnection(DataBaseConfig.URL, DataBaseConfig.USER, null)) {
+                connection.setAutoCommit(false);
+                if (transactionDao.depositMoney(connection, numeroCompte, value)) {
+                    connection.commit();
+                    return true;
+                } else {
+                    connection.rollback();
+                    return false;
+                }
+            } catch (SQLException e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+        else {
+            throw new RuntimeException("Invalid montant " + value);
+        }
     }
 }

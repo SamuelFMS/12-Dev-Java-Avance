@@ -1,5 +1,8 @@
 package utils;
 
+import validation.Validator;
+
+import java.math.BigDecimal;
 import java.util.Scanner;
 
 public interface InputUtils {
@@ -60,6 +63,26 @@ public interface InputUtils {
             res = scanner.nextLine();
             if(res.isEmpty()) {
                 System.out.println("La chaine ne peux pas etre vide");
+            }
+        }
+        return res;
+    }
+
+    static BigDecimal inputMoney(Scanner scanner) {
+        BigDecimal res = BigDecimal.ZERO;
+        boolean isInputValid = false;
+        while(!isInputValid) {
+            String str = scanner.next();
+            if(Validator.isAValidDecimal(str)) {
+                try {
+                    res = new BigDecimal(str);
+                    isInputValid = true;
+                } catch (Exception e) {
+                    System.out.println("Erreur lors de la convertion");
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("Invalid montant ex: 12.4");
             }
         }
         return res;

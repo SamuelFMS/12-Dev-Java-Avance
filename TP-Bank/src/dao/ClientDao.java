@@ -1,14 +1,17 @@
 package dao;
 
+import config.DataBaseConfig;
 import models.ClientModel;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ClientDao extends Dao<ClientModel> {
     String creationNameTable = "utilisateur";
+
     public ClientDao() {
         super("vue_solde_utilisateurs");
     }
@@ -16,6 +19,24 @@ public class ClientDao extends Dao<ClientModel> {
     @Override
     protected ClientModel mapRow(ResultSet rs) throws SQLException {
         return new ClientModel(rs.getString("numero_compte"), rs.getString("titulaire"), rs.getBigDecimal("total"));
+    }
+
+    public ClientModel getClient(String numberAccount) {
+        ClientModel clientModel = null;
+        String sql = "SELECT * FROM " + vueNameTable + " WHERE numero_compte=?";
+        try (Connection connection = DriverManager.getConnection(DataBaseConfig.URL, DataBaseConfig.USER, null)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, numberAccount);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        clientModel = mapRow(resultSet);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return clientModel;
     }
 
     public String createClient(Connection connection, String numberAccount, String holder) throws SQLException {
@@ -26,10 +47,9 @@ public class ClientDao extends Dao<ClientModel> {
 
         int rowsInserted = preparedStatement.executeUpdate();
 
-        if(rowsInserted == 1) {
+        if (rowsInserted == 1) {
             return numberAccount;
-        }
-        else {
+        } else {
             return null;
         }
     }
