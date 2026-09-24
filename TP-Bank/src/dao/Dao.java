@@ -4,6 +4,7 @@ import config.DataBaseConfig;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,13 +13,9 @@ import java.util.List;
 
 public abstract class Dao<T> {
     protected final String vueNameTable;
-    protected final String creationNameTable;
-    protected final String nameIdColumn;
 
-    protected Dao(String vueNameTable, String creationNameTable, String nameIdColumn) {
+    protected Dao(String vueNameTable) {
         this.vueNameTable = vueNameTable;
-        this.creationNameTable = creationNameTable;
-        this.nameIdColumn = nameIdColumn;
     }
 
     protected abstract T mapRow(ResultSet rs) throws SQLException;

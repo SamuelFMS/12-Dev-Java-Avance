@@ -8,9 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ClientDao extends Dao<ClientModel> {
-
+    String creationNameTable = "utilisateur";
     public ClientDao() {
-        super("vue_solde_utilisateurs","utilisateur", "numero_compte");
+        super("vue_solde_utilisateurs");
     }
 
     @Override

@@ -1,8 +1,10 @@
 import business.ClientBusiness;
+import business.TransactionBusiness;
 import dao.ClientDao;
 import exceptions.EmptyArrayException;
 import jdk.internal.util.xml.impl.Input;
 import models.ClientModel;
+import models.TransactionModel;
 import utils.DisplayTable;
 import utils.DisplayTableInterface;
 import utils.InputUtils;
@@ -17,6 +19,7 @@ import java.util.Scanner;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     static ClientBusiness clientBusiness;
+    static TransactionBusiness transactionBusiness;
     static Scanner scanner;
 
 
@@ -47,7 +50,12 @@ public class Main {
         List<ClientModel> listClient = clientBusiness.getAllClients();
         SearchTable searchTable = new SearchTable(listClient);
         try {
-            searchTable.show(scanner);
+            String numeroCompte = searchTable.show(scanner);
+            if(numeroCompte != null){
+                List<TransactionModel> transactions = transactionBusiness.getAllRelated(numeroCompte);
+                DisplayTable displayTable = new DisplayTable(transactions);
+                displayTable.show(scanner);
+            }
         } catch (EmptyArrayException e){
             System.out.println("Aucun client trouvé");
         }
@@ -80,26 +88,9 @@ public class Main {
 
     public static void main(String[] args) {
         scanner = new Scanner(System.in);
+        transactionBusiness = new TransactionBusiness();
         clientBusiness = new ClientBusiness();
         mainMenu();
         scanner.close();
-       /* mesClients.add(new ClientModel("FR-XXXX-XXXX", "Samuel Curran", 1000));
-        mesClients.add(new ClientModel("IE-XXXX-1445", "PAPA", 10000000));
-        for(int i = 0; i< 30;i++){
-            mesClients.add(new ClientModel("IE-XXXX-1445", "Test", 10000000));
-        }
-        mesClients.set(12, new ClientModel("IE-XXXX-1445TESTETESTSTES", "Test", 10000000));
-        DisplayTable displayTable = new DisplayTable(mesClients);
-        try {
-            displayTable.show(scanner);
-        } catch (EmptyArrayException e) {
-            throw new RuntimeException(e);
-        }
-        SearchTable searchTable = new SearchTable(mesClients);
-        try {
-            searchTable.show(scanner);
-        } catch (EmptyArrayException e) {
-            throw new RuntimeException(e);
-        }*/
     }
 }
